@@ -221,6 +221,9 @@ __marimo__/
 .DS_Store
 .env
 data/
+/*-voice-*.ogg
+/*-photo-*.jpg
+/infografica_*.png
 
 .env.*
 !.env.example
