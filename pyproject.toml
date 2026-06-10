@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "project-jarvis"
+version = "0.1.0"
+description = "Jarvis Telegram background service powered by Agno and OpenRouter"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "agno>=2.0.0",
+  "aiogram>=3.20.0",
+  "ddgs>=9.0.0",
+  "duckdb>=1.0.0",
+  "httpx>=0.28.0",
+  "matplotlib>=3.9.0",
+  "openai>=1.55.0",
+  "pandas>=2.2.0",
+  "pydantic>=2.9.0",
+  "pydantic-settings>=2.5.0",
+  "pypdf>=5.0.0",
+  "python-dotenv>=1.0.1",
+  "reportlab>=4.2.0",
+  "sqlalchemy>=2.0.36",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.0",
+  "pytest-asyncio>=0.24.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

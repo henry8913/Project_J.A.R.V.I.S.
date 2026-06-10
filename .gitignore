@@ -217,5 +217,15 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# Jarvis
 .DS_Store
 .env
+data/
+
+.env.*
+!.env.example
+
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3

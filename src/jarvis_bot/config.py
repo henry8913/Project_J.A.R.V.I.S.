@@ -1,0 +1,83 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    """Runtime settings loaded from environment variables or `.env`."""
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    telegram_bot_token: str = Field(default="__set_in_env__", alias="TELEGRAM_BOT_TOKEN")
+    telegram_allowed_user_id: int = Field(default=0, alias="TELEGRAM_ALLOWED_USER_ID")
+
+    openrouter_api_key: str = Field(default="__set_in_env__", alias="OPENROUTER_API_KEY")
+    openrouter_model: str = Field(default="openai/gpt-4.1-mini", alias="OPENROUTER_MODEL")
+    openrouter_vision_model: str = Field(default="openai/gpt-4.1-mini", alias="OPENROUTER_VISION_MODEL")
+    openrouter_audio_model: str = Field(default="openai/gpt-4o-mini-transcribe", alias="OPENROUTER_AUDIO_MODEL")
+    openrouter_memory_model: str = Field(default="openai/gpt-4.1-nano", alias="OPENROUTER_MEMORY_MODEL")
+
+    agno_db_path: str = Field(default="data/jarvis.db", alias="AGNO_DB_PATH")
+    workspace_dir: str = Field(default="data/workspace", alias="JARVIS_WORKSPACE_DIR")
+    incoming_dir: str = Field(default="data/incoming", alias="JARVIS_INCOMING_DIR")
+    output_dir: str = Field(default="data/output", alias="JARVIS_OUTPUT_DIR")
+    reports_dir: str = Field(default="data/reports", alias="JARVIS_REPORTS_DIR")
+    python_sandbox_dir: str = Field(default="data/sandbox/python", alias="JARVIS_PYTHON_SANDBOX_DIR")
+    shell_sandbox_dir: str = Field(default="data/sandbox/shell", alias="JARVIS_SHELL_SANDBOX_DIR")
+
+    browserbase_api_key: str | None = Field(default=None, alias="BROWSERBASE_API_KEY")
+    browserbase_project_id: str | None = Field(default=None, alias="BROWSERBASE_PROJECT_ID")
+    log_level: str = Field(default="INFO", alias="LOG_LEVEL")
+
+    @property
+    def db_path(self) -> Path:
+        return Path(self.agno_db_path)
+
+    @property
+    def workspace_path(self) -> Path:
+        return Path(self.workspace_dir)
+
+    @property
+    def incoming_path(self) -> Path:
+        return Path(self.incoming_dir)
+
+    @property
+    def output_path(self) -> Path:
+        return Path(self.output_dir)
+
+    @property
+    def reports_path(self) -> Path:
+        return Path(self.reports_dir)
+
+    @property
+    def python_sandbox_path(self) -> Path:
+        return Path(self.python_sandbox_dir)
+
+    @property
+    def shell_sandbox_path(self) -> Path:
+        return Path(self.shell_sandbox_dir)
+
+    def ensure_directories(self) -> None:
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        for path in (
+            self.workspace_path,
+            self.incoming_path,
+            self.output_path,
+            self.reports_path,
+            self.python_sandbox_path,
+            self.shell_sandbox_path,
+        ):
+            path.mkdir(parents=True, exist_ok=True)
+
+    def validate_required_secrets(self) -> None:
+        if self.telegram_bot_token == "__set_in_env__":
+            raise RuntimeError("Set TELEGRAM_BOT_TOKEN in the environment or in .env")
+        if self.openrouter_api_key == "__set_in_env__":
+            raise RuntimeError("Set OPENROUTER_API_KEY in the environment or in .env")
